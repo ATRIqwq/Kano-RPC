@@ -2,9 +2,12 @@ package com.kano.kanorpc.proxy;
 
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
+import com.kano.RpcApplication;
 import com.kano.kanorpc.model.RpcRequest;
 import com.kano.kanorpc.model.RpcResponse;
 import com.kano.kanorpc.serializer.JdkSerializer;
+import com.kano.kanorpc.serializer.Serializer;
+import com.kano.kanorpc.serializer.SerializerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -14,10 +17,15 @@ import java.lang.reflect.Method;
  * 服务代理（JDK动态代理）
  */
 public class ServiceProxy implements InvocationHandler {
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        //指定序列化器
-        JdkSerializer jdkSerializer = new JdkSerializer();
+
+//        //指定序列化器
+//        JdkSerializer jdkSerializer = new JdkSerializer();
+        // 指定序列化器
+        final Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
+
 
         //构造请求
         RpcRequest rpcRequest = RpcRequest.builder()
@@ -27,16 +35,16 @@ public class ServiceProxy implements InvocationHandler {
                 .args(args)
                 .build();
 
-        //接收请求，然后反序列化返回
+        //发送请求，接收响应，然后反序列化返回
         try {
-            byte[] bodyBytes = jdkSerializer.serialize(rpcRequest);
+            byte[] bodyBytes = serializer.serialize(rpcRequest);
             try(
                     HttpResponse httpResponse = HttpRequest.post("http://localhost:8080")
                             .body(bodyBytes)
                             .execute()
             ) {
                 byte[] result = httpResponse.bodyBytes();
-                RpcResponse rpcResponse = jdkSerializer.deserialize(result, RpcResponse.class);
+                RpcResponse rpcResponse = serializer.deserialize(result, RpcResponse.class);
                 return rpcResponse.getData();
             }
         } catch (IOException e) {

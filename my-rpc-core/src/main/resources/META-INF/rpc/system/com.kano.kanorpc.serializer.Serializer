@@ -1,0 +1,4 @@
+jdk=com.kano.kanorpc.serializer.JdkSerializer
+hessian=com.kano.kanorpc.serializer.HessianSerializer
+
+kryo=com.kano.kanorpc.serializer.KryoSerializer

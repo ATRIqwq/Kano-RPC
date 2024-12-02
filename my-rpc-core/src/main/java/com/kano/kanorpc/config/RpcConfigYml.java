@@ -1,14 +1,13 @@
 package com.kano.kanorpc.config;
 
 
-import com.kano.kanorpc.serializer.SerializerKeys;
 import lombok.Data;
 
 /**
  * RPC 框架配置
  */
 @Data
-public class RpcConfig {
+public class RpcConfigYml {
 
     /**
      * 名称
@@ -30,13 +29,4 @@ public class RpcConfig {
      */
     private Integer serverPort = 8080;
 
-    /**
-     * 模拟调用
-     */
-    private boolean mock = false;
-
-    /**
-     * 序列化器
-     */
-    private String serializer = SerializerKeys.JDK;
 }
