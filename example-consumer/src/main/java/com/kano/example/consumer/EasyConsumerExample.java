@@ -19,7 +19,7 @@ public class EasyConsumerExample {
 //        System.out.println(rpc);
 
         UserService userService = ServiceProxyFactory.getProxy(UserService.class);
-        UserService mockProxy = ServiceProxyFactory.getMockProxy(UserService.class);
+//        UserService mockProxy = ServiceProxyFactory.getMockProxy(UserService.class);
 
         // todo 需要获取 UserService 的实现类对象
         User user = new User();
@@ -32,8 +32,6 @@ public class EasyConsumerExample {
             System.out.println("user == null");
         }
 
-        short number = mockProxy.getNumber();
-        System.out.println(number);
     }
 
 

@@ -1,7 +1,10 @@
 package com.kano;
 
+import com.kano.kanorpc.config.RegistryConfig;
 import com.kano.kanorpc.config.RpcConfig;
 import com.kano.kanorpc.constant.RpcConstant;
+import com.kano.kanorpc.registry.Registry;
+import com.kano.kanorpc.registry.RegistryFactory;
 import com.kano.kanorpc.utils.ConfigUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,6 +25,11 @@ public class RpcApplication {
     public static void init(RpcConfig newRcpconfig){
         rpcConfig = newRcpconfig;
         log.info("rpc init, config = {}",newRcpconfig.toString());
+        //注册中心初始化
+        RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
+        Registry registry = RegistryFactory.getInstance(registryConfig.getRegistry());
+        registry.init(registryConfig);
+        log.info("register init, config = {}",registryConfig);
     }
 
     /**
