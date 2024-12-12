@@ -25,6 +25,7 @@ public class SpiLoader {
 
     /**
      * 存储已经加载的类（接口名 => （key =>实现类）)
+     * Serializer => (json => com.kano.kanorpc.serializer.JsonSerializer)
      */
     private static Map<String,Map<String,Class<?>>> loaderMap = new ConcurrentHashMap<>();
 

@@ -21,10 +21,10 @@ public class ServiceProxy implements InvocationHandler {
 
         //构造请求
         RpcRequest rpcRequest = RpcRequest.builder()
-                .serviceName(method.getDeclaringClass().getName())
-                .methodName(method.getName())
-                .parameterTypes(method.getParameterTypes())
-                .args(args)
+                .serviceName(method.getDeclaringClass().getName()) //com.example.MyService
+                .methodName(method.getName()) //getUserName()
+                .parameterTypes(method.getParameterTypes()) //String
+                .args(args) //User user
                 .build();
 
         //接收请求，然后反序列化返回

@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
@@ -50,7 +51,7 @@ public class RegistryTest {
     public void unRegister() {
         ServiceMetaInfo serviceMetaInfo = new ServiceMetaInfo();
         serviceMetaInfo.setServiceName("myService");
-        serviceMetaInfo.setServiceVersion("1.0");
+        serviceMetaInfo.setServiceVersion("2.0");
         serviceMetaInfo.setServiceHost("localhost");
         serviceMetaInfo.setServicePort(1234);
         registry.unRegister(serviceMetaInfo);
@@ -61,7 +62,7 @@ public class RegistryTest {
     public void serviceDiscovery() {
         ServiceMetaInfo serviceMetaInfo = new ServiceMetaInfo();
         serviceMetaInfo.setServiceName("myService");
-        serviceMetaInfo.setServiceVersion("1.0");
+        serviceMetaInfo.setServiceVersion("2.0");
         String serviceKey = serviceMetaInfo.getServiceKey();
         List<ServiceMetaInfo> serviceMetaInfoList = registry.serviceDiscovery(serviceKey);
 
@@ -72,5 +73,15 @@ public class RegistryTest {
 
     @Test
     public void destroy() {
+    }
+
+    @Test
+    public void heartBeat() throws Exception {
+
+        register();
+
+        //阻塞60s
+        TimeUnit.SECONDS.sleep(60);
+
     }
 }
