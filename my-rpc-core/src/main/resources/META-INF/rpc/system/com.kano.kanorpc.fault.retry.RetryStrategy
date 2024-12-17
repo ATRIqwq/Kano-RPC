@@ -1,0 +1,2 @@
+no=com.kano.kanorpc.fault.retry.NoRetryStrategy
+fixedInterval=com.kano.kanorpc.fault.retry.FixIntervalRetryStrategy

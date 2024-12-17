@@ -1,6 +1,7 @@
 package com.kano.kanorpc.config;
 
 
+import com.kano.kanorpc.fault.retry.RetryStrategyKeys;
 import com.kano.kanorpc.loadbalancer.LoadBalancerKeys;
 import com.kano.kanorpc.serializer.SerializerKeys;
 import lombok.Data;
@@ -50,4 +51,9 @@ public class RpcConfig {
      * 负载均衡器
      */
     private String loadBalancer = LoadBalancerKeys.ROUND_ROBIN;
+
+    /**
+     * 重试策略
+     */
+    private String retryStrategy = RetryStrategyKeys.NO;
 }
