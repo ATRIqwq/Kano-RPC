@@ -1,0 +1,3 @@
+roundRobin=com.kano.kanorpc.loadbalancer.RoundRobinLoadBalancer
+random=com.kano.kanorpc.loadbalancer.RandomLoadBalancer
+consistentHash=com.kano.kanorpc.loadbalancer.ConsistentHashLoadBalancer

@@ -10,6 +10,7 @@ import com.kano.kanorpc.registry.LocalRegistry;
 import com.kano.kanorpc.registry.Registry;
 import com.kano.kanorpc.registry.RegistryFactory;
 import com.kano.kanorpc.server.VertxHttpServer;
+import com.kano.kanorpc.tcp.VertxTcpServer;
 import com.kano.kanorpc.utils.ConfigUtil;
 
 /**
@@ -41,7 +42,10 @@ public class EasyProviderExample {
         }
 
         // 启动 Web 服务
-        VertxHttpServer vertxHttpServer = new VertxHttpServer();
-        vertxHttpServer.doStart(RpcApplication.getRpcConfig().getServerPort());
+//        VertxHttpServer vertxHttpServer = new VertxHttpServer();
+//        vertxHttpServer.doStart(RpcApplication.getRpcConfig().getServerPort());
+
+        VertxTcpServer vertxTcpServer = new VertxTcpServer();
+        vertxTcpServer.doStart(RpcApplication.getRpcConfig().getServerPort());
     }
 }

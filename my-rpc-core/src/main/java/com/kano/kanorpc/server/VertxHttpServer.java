@@ -3,6 +3,9 @@ package com.kano.kanorpc.server;
 
 import io.vertx.core.Vertx;
 
+/**
+ * 创建 HTTP 服务器
+ */
 public class VertxHttpServer implements HttpServer {
 
 

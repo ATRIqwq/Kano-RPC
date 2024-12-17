@@ -25,21 +25,21 @@ public class EasyConsumerExample {
         User user = new User();
         user.setName("yupi");
 
-        User user2 = new User();
-        user2.setName("saber");
-
-        User user3 = new User();
-        user3.setName("lancer");
+//        User user2 = new User();
+//        user2.setName("saber");
+//
+//        User user3 = new User();
+//        user3.setName("lancer");
         // 调用
         User newUser = userService.getUser(user);
 
-        User newUser2 = userService.getUser(user2);
-        User newUser3 = userService.getUser(user3);
+//        User newUser2 = userService.getUser(user2);
+//        User newUser3 = userService.getUser(user3);
 
         if (newUser != null) {
             System.out.println(newUser.getName());
-            System.out.println(newUser2.getName());
-            System.out.println(newUser3.getName());
+//            System.out.println(newUser2.getName());
+//            System.out.println(newUser3.getName());
         } else {
             System.out.println("user == null");
         }
