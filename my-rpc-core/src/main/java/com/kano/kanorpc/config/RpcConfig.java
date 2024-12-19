@@ -2,6 +2,7 @@ package com.kano.kanorpc.config;
 
 
 import com.kano.kanorpc.fault.retry.RetryStrategyKeys;
+import com.kano.kanorpc.fault.tolerant.TolerantStrategyKeys;
 import com.kano.kanorpc.loadbalancer.LoadBalancerKeys;
 import com.kano.kanorpc.serializer.SerializerKeys;
 import lombok.Data;
@@ -56,4 +57,9 @@ public class RpcConfig {
      * 重试策略
      */
     private String retryStrategy = RetryStrategyKeys.NO;
+
+    /**
+     * 容错策略
+     */
+    private String tolerantStrategy = TolerantStrategyKeys.FAIL_FAST;
 }

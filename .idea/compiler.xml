@@ -7,10 +7,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="my-rpc-easy" />
+        <module name="example-springboot-provider" />
+        <module name="example-springboot-consumer" />
         <module name="example-provider" />
-        <module name="my-rpc-core" />
         <module name="example-common" />
+        <module name="my-rpc-easy" />
+        <module name="my-rpc-core" />
+        <module name="kano-rpc-springboot-start" />
         <module name="example-consumer" />
       </profile>
     </annotationProcessing>

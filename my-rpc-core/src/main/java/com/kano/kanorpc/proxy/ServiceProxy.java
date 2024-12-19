@@ -10,6 +10,8 @@ import com.kano.kanorpc.config.RpcConfig;
 import com.kano.kanorpc.constant.RpcConstant;
 import com.kano.kanorpc.fault.retry.RetryStrategy;
 import com.kano.kanorpc.fault.retry.RetryStrategyFactory;
+import com.kano.kanorpc.fault.tolerant.TolerantStrategy;
+import com.kano.kanorpc.fault.tolerant.TolerantStrategyFactory;
 import com.kano.kanorpc.loadbalancer.LoadBalancer;
 import com.kano.kanorpc.loadbalancer.LoadBalancerFactory;
 import com.kano.kanorpc.model.RpcRequest;
@@ -41,13 +43,6 @@ public class ServiceProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-
-//        //指定序列化器
-//        JdkSerializer jdkSerializer = new JdkSerializer();
-        // 指定序列化器
-        final Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
-
-
         //构造请求
         String serviceName = method.getDeclaringClass().getName();
         RpcRequest rpcRequest = RpcRequest.builder()
@@ -57,52 +52,59 @@ public class ServiceProxy implements InvocationHandler {
                 .args(args)
                 .build();
 
+        //获取RPC配置，创建注册中心实例，查询服务列表
+        RpcConfig rpcConfig = RpcApplication.getRpcConfig();
+        Registry registry = RegistryFactory.getInstance(rpcConfig.getRegistryConfig().getRegistry());
+        ServiceMetaInfo serviceMetaInfo = new ServiceMetaInfo();
+        serviceMetaInfo.setServiceName(serviceName);
+        serviceMetaInfo.setServiceVersion(RpcConstant.DEFAULT_SERVICE_VERSION);
+        List<ServiceMetaInfo> serviceMetaInfoList = registry.serviceDiscovery(serviceMetaInfo.getServiceKey());
+        if (CollUtil.isEmpty(serviceMetaInfoList)){
+            throw new RuntimeException("暂无服务地址");
+        }
+//            ServiceMetaInfo selectedServiceMetaInfo = serviceMetaInfoList.get(0);
+        //负载均衡
+        LoadBalancer loadBalancer = LoadBalancerFactory.getInstance(rpcConfig.getLoadBalancer());
+        //将调用方法名（请求路径）作为负载均衡参数
+        Map<String,Object> requestParams = new HashMap<>();
+        requestParams.put("methodName",rpcRequest.getMethodName());
+        ServiceMetaInfo selectedServiceMetaInfo = loadBalancer.select(requestParams, serviceMetaInfoList);
 
+        RpcResponse rpcResponse;
         //发送请求，接收响应，然后反序列化返回
         try {
-            //获取RPC配置，创建注册中心实例，查询服务列表
-            RpcConfig rpcConfig = RpcApplication.getRpcConfig();
-            Registry registry = RegistryFactory.getInstance(rpcConfig.getRegistryConfig().getRegistry());
-            ServiceMetaInfo serviceMetaInfo = new ServiceMetaInfo();
-            serviceMetaInfo.setServiceName(serviceName);
-            serviceMetaInfo.setServiceVersion(RpcConstant.DEFAULT_SERVICE_VERSION);
-            List<ServiceMetaInfo> serviceMetaInfoList = registry.serviceDiscovery(serviceMetaInfo.getServiceKey());
-            if (CollUtil.isEmpty(serviceMetaInfoList)){
-                throw new RuntimeException("暂无服务地址");
-            }
-//            ServiceMetaInfo selectedServiceMetaInfo = serviceMetaInfoList.get(0);
-            //负载均衡
-            LoadBalancer loadBalancer = LoadBalancerFactory.getInstance(rpcConfig.getLoadBalancer());
-            //将调用方法名（请求路径）作为负载均衡参数
-            Map<String,Object> requestParams = new HashMap<>();
-            requestParams.put("methodName",rpcRequest.getMethodName());
-            ServiceMetaInfo selectedServiceMetaInfo = loadBalancer.select(requestParams, serviceMetaInfoList);
-
-
-////            发送HTTP请求
-//            try(
-//                    HttpResponse httpResponse = HttpRequest.post(selectedServiceMetaInfo.getServiceAddress())
-//                            .body(bodyBytes)
-//                            .execute()
-//            ) {
-//                byte[] result = httpResponse.bodyBytes();
-//                RpcResponse rpcResponse = serializer.deserialize(result, RpcResponse.class);
-//                return rpcResponse.getData();
-//            }
-
             //发送TCP请求
-
             //使用重试机制
             RetryStrategy retryStrategy = RetryStrategyFactory.getInstance(rpcConfig.getRetryStrategy());
-            RpcResponse rpcResponse = retryStrategy.doRetry(() ->
+            rpcResponse = retryStrategy.doRetry(() ->
                     VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo)
             );
-            return rpcResponse.getData();
-
-
         } catch (IOException e) {
-            throw new RuntimeException("调用失败");
+            TolerantStrategy tolerantStrategy = TolerantStrategyFactory.getInstance(rpcConfig.getTolerantStrategy());
+            rpcResponse = tolerantStrategy.doTolerant(null,e);
         }
+        return rpcResponse.getData();
 
     }
+
+    /**
+     * 发送HTTP请求
+     * @param selectedServiceMetaInfo
+     * @param bodyBytes
+     * @return
+     * @throws IOException
+     */
+    private static RpcResponse doHttpRequest(ServiceMetaInfo selectedServiceMetaInfo,byte[] bodyBytes) throws IOException {
+        final Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
+        // 发送 HTTP 请求
+        try (HttpResponse httpResponse = HttpRequest.post(selectedServiceMetaInfo.getServiceAddress())
+                .body(bodyBytes)
+                .execute()) {
+            byte[] result = httpResponse.bodyBytes();
+            // 反序列化
+            RpcResponse rpcResponse = serializer.deserialize(result, RpcResponse.class);
+            return rpcResponse;
+        }
+    }
+
 }

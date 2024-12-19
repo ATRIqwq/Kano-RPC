@@ -1,0 +1,3 @@
+failFast=com.kano.kanorpc.fault.tolerant.FailFastTolerantStrategy
+failSafe=com.kano.kanorpc.fault.tolerant.FailSafeTolerantStrategy
+

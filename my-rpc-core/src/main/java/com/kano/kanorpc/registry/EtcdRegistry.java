@@ -40,8 +40,6 @@ public class EtcdRegistry implements Registry{
      */
     private final Set<String> watchingKeySet = new ConcurrentHashSet<>();
 
-
-
     /**
      * 根节点
      */
@@ -124,7 +122,6 @@ public class EtcdRegistry implements Registry{
                 //监听key的变化
                 String key = keyValue.getKey().toString(StandardCharsets.UTF_8);
                 watch(key);
-
                 String value = keyValue.getValue().toString(StandardCharsets.UTF_8);
                 return JSONUtil.toBean(value, ServiceMetaInfo.class);
             }).collect(Collectors.toList());

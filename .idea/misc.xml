@@ -9,6 +9,9 @@
         <option value="$PROJECT_DIR$/example-provider/pom.xml" />
         <option value="$PROJECT_DIR$/my-rpc-easy/pom.xml" />
         <option value="$PROJECT_DIR$/my-rpc-core/pom.xml" />
+        <option value="$PROJECT_DIR$/kano-rpc-springboot-start/pom.xml" />
+        <option value="$PROJECT_DIR$/example-springboot-provider/pom.xml" />
+        <option value="$PROJECT_DIR$/example-springboot-consumer/pom.xml" />
       </list>
     </option>
   </component>

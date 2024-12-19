@@ -3,6 +3,7 @@ package com.kano.example.consumer;
 
 import com.kano.example.common.model.User;
 import com.kano.example.common.service.UserService;
+import com.kano.kanorpc.bootstrap.ConsumerBootstrap;
 import com.kano.kanorpc.config.RpcConfig;
 import com.kano.kanorpc.proxy.MockServiceProxy;
 import com.kano.kanorpc.proxy.ServiceProxyFactory;
@@ -15,8 +16,8 @@ public class EasyConsumerExample {
 
     public static void main(String[] args) {
 
-//        RpcConfig rpc = ConfigUtil.loadConfig(RpcConfig.class, "rpc");
-//        System.out.println(rpc);
+        //服务提供者初始化
+        ConsumerBootstrap.init();
 
         UserService userService = ServiceProxyFactory.getProxy(UserService.class);
 //        UserService mockProxy = ServiceProxyFactory.getMockProxy(UserService.class);

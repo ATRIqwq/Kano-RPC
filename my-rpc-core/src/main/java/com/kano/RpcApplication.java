@@ -30,7 +30,7 @@ public class RpcApplication {
         log.info("rpc init, config = {}",newRcpconfig.toString());
 
         //序列化器初始化
-        SerializerFactory.getInstance(newRcpconfig.getSerializer());
+//        SerializerFactory.getInstance(newRcpconfig.getSerializer());
 
         //注册中心初始化
         RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
